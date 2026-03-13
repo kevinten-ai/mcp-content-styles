@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "content-styles": {
+      "command": "python",
+      "args": ["-m", "mcp_content_styles.main"],
+      "env": {
+        "PYTHONPATH": "/Users/kevinten/projects/mcp-content-styles/src"
+      }
+    }
+  }
+}

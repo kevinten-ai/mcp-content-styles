@@ -1,0 +1,17 @@
+[project]
+name = "mcp-content-styles"
+version = "0.1.0"
+description = "MCP server for platform-specific content creation prompts"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "mcp>=1.0.0",
+    "loguru>=0.7.0",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project.scripts]
+mcp-content-styles = "mcp_content_styles.main:mcp.run"
