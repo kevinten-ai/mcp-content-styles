@@ -1,0 +1,60 @@
+%% MCP Content Styles - Architecture Diagram
+%% Use Mermaid CLI or online editor to render: https://mermaid.live
+
+flowchart TB
+    subgraph Client["🖥️ MCP Client"]
+        Claude["Claude Desktop"]
+        Cursor["Cursor"]
+        Other["Other Clients"]
+    end
+
+    subgraph Server["🔧 MCP Content Styles Server"]
+        direction TB
+
+        subgraph Core["核心模块"]
+            MCP["MCP Protocol Handler"]
+            Tools["MCP Tools"]
+        end
+
+        subgraph Manager["Skill Manager"]
+            Loader["Template Loader"]
+            Parser["Template Parser"]
+            Formatter["String Formatter"]
+        end
+
+        subgraph Templates["技能模板库"]
+            Z["📚 zhihu_article"]
+            W["📰 wechat_article"]
+            X["📕 xiaohongshu_note"]
+            WB["🐦 weibo_post"]
+            D["🎵 douyin_script"]
+        end
+    end
+
+    subgraph Integration["🔌 集成生态"]
+        Image["mcp-image\n配图生成"]
+        Video["mcp-video-gen\n视频生成"]
+        Publish["平台发布 MCP"]
+    end
+
+    Claude -->|MCP Protocol| Server
+    Cursor -->|MCP Protocol| Server
+    Other -->|MCP Protocol| Server
+
+    MCP --> Tools
+    Tools --> Manager
+
+    Loader --> Templates
+    Parser --> Loader
+    Formatter --> Parser
+
+    Server --> Image
+    Server --> Video
+    Server --> Publish
+
+    style Client fill:#e3f2fd
+    style Server fill:#fff8e1
+    style Core fill:#ffecb3
+    style Manager fill:#ffe0b2
+    style Templates fill:#f3e5f5
+    style Integration fill:#e8f5e9

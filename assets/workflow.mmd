@@ -1,0 +1,80 @@
+%% MCP Content Styles - Workflow Diagram
+%% Use Mermaid CLI or online editor to render: https://mermaid.live
+
+flowchart TB
+    subgraph Input["📥 输入阶段"]
+        User["用户"]
+        Markdown["Markdown 内容"]
+        Platform{"选择平台"}
+    end
+
+    subgraph Processing["⚙️ 处理阶段"]
+        SkillManager["Skill Manager"]
+
+        subgraph Skills["技能模板"]
+            Zhihu["📚 知乎"]
+            Wechat["📰 公众号"]
+            Xhs["📕 小红书"]
+            Weibo["🐦 微博"]
+            Douyin["🎵 抖音"]
+        end
+
+        Mode{"选择模式"}
+        Format["📝 Format\n保持结构"]
+        Rewrite["✨ Rewrite\n智能重写"]
+    end
+
+    subgraph Output["📤 输出阶段"]
+        Prompt["生成 Prompt"]
+        LLM["🤖 LLM 生成"]
+        Content["平台专属内容"]
+    end
+
+    subgraph Media["🎨 媒体生成"]
+        Image["mcp-image\n生成配图"]
+        Video["mcp-video-gen\n生成视频"]
+    end
+
+    subgraph Publish["🚀 发布阶段"]
+        PlatformMCP["平台 MCP"]
+        Published["已发布内容"]
+    end
+
+    User --> Markdown
+    Markdown --> Platform
+    Platform --> SkillManager
+
+    SkillManager --> Zhihu
+    SkillManager --> Wechat
+    SkillManager --> Xhs
+    SkillManager --> Weibo
+    SkillManager --> Douyin
+
+    Zhihu --> Mode
+    Wechat --> Mode
+    Xhs --> Mode
+    Weibo --> Mode
+    Douyin --> Mode
+
+    Mode -->|format| Format
+    Mode -->|rewrite| Rewrite
+
+    Format --> Prompt
+    Rewrite --> Prompt
+
+    Prompt --> LLM
+    LLM --> Content
+
+    Content --> Image
+    Content --> Video
+    Content --> PlatformMCP
+    Image --> PlatformMCP
+    Video --> PlatformMCP
+
+    PlatformMCP --> Published
+
+    style Input fill:#e1f5fe
+    style Processing fill:#fff3e0
+    style Output fill:#e8f5e9
+    style Media fill:#fce4ec
+    style Publish fill:#f3e5f5

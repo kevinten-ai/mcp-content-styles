@@ -3,6 +3,8 @@
     "content-styles": {
       "command": "python",
       "args": ["-m", "mcp_content_styles.main"],
+      "cwd": "/Users/kevinten/projects/mcp-content-styles",
+      "description": "MCP Content Styles - Platform-specific content creation prompts",
       "env": {
         "PYTHONPATH": "/Users/kevinten/projects/mcp-content-styles/src"
       }
