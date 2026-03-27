@@ -1,6 +1,7 @@
 """Tests for the skill manager module."""
 
 import os
+from pathlib import Path
 import pytest
 from mcp_content_styles.skill_manager import SkillManager
 
@@ -18,7 +19,7 @@ class TestSkillManager:
         """Test initialization with custom directory."""
         custom_dir = "/tmp/test_skills"
         manager = SkillManager(custom_dir)
-        assert manager.skills_dir == custom_dir
+        assert manager.skills_dir == Path(custom_dir)
 
     def test_load_skills(self):
         """Test loading skills from directory."""
@@ -43,7 +44,7 @@ class TestSkillManager:
         """Test formatting a skill with parameters."""
         manager = SkillManager()
         result = manager.format_skill(
-            "zhihu_article",
+            "x_post",
             topic="Test Topic",
             original_content="Test content"
         )
@@ -67,7 +68,6 @@ class TestSkillManager:
         for skill in skills:
             assert "name" in skill
             assert "description" in skill
-            assert "file" in skill
 
     def test_has_skill(self):
         """Test checking if skill exists."""

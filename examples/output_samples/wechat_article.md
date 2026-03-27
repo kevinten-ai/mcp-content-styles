@@ -1,169 +1,167 @@
 # 📰 公众号文章样例
 
-**主题**: MCP协议实战：如何让你的AI应用连接万物
-**模式**: format
-**预计字数**: ~1500字
+**主题**: MCP 协议实战：5 分钟让 AI 调用本地工具
+**模式**: rewrite
+**预计字数**: ~1800 字
 
 ---
 
-## MCP协议实战：如何让你的AI应用连接万物
+## MCP 协议实战：5 分钟让 AI 调用本地工具
 
-**导语**
-
-你是否想过，为什么同一个AI功能，在不同的平台上需要重复开发？今天，我来介绍一个可能改变这一切的技术——MCP协议。
+上个月给 Claude Desktop 加了文件处理功能，踩了不少坑。这篇把核心流程和踩坑记录整理出来，照着做 5 分钟就能跑通。
 
 ---
 
-### 01. 为什么需要MCP？
+### 01. 问题：重复对接的痛
 
-作为AI应用开发者，你一定遇到过这些烦恼：
+做 AI 应用最烦的事情之一——同一个功能，不同平台要写不同的代码。
 
-- 给OpenAI写了一套工具调用代码，换到Claude又要重写
-- 每个平台的接口规范都不一样，学习成本居高不下
-- 好不容易开发的功能，换个环境就用不了
+我之前的项目需要让 AI 操作本地文件。OpenAI 的 function calling 是一套格式，Claude 的 tool use 又是另一套，国内模型还各有各的写法。
 
-**这就是MCP要解决的核心问题。**
+**三套几乎一样的代码，维护起来崩溃。**
 
-MCP（Model Context Protocol）是Anthropic推出的开放协议，目标是标准化AI模型与外部工具的集成方式。简单说，它想成为AI时代的"HTTP协议"。
+后来发现了 MCP（Model Context Protocol），简单说就是一个**让 AI 调用外部工具的统一接口**，类似 USB 接口统一了各种设备的连接方式——写一次 server，所有支持 MCP 的 client 都能用。
 
 ---
 
-### 02. MCP的核心设计
+### 02. 技术选型：为什么选 MCP
 
-MCP的设计非常简洁，包含三个层次：
+选 MCP 之前也看过其他方案：
 
-**协议层**
+| 方案 | 优点 | 缺点 |
+|------|------|------|
+| 直接调平台 API | 灵活 | 每个平台写一遍 |
+| LangChain Tools | 生态好 | 绑定 LangChain 框架 |
+| **MCP** | **标准协议，跨平台** | **生态早期** |
 
-定义了标准的请求/响应格式。无论是什么工具，都遵循相同的交互模式：
-
-```json
-{
-  "tool": "read_file",
-  "params": {"path": "/tmp/test.txt"}
-}
-```
-
-**传输层**
-
-支持多种传输方式：
-- **stdio**: 本地进程通信，适合桌面应用
-- **SSE**: 服务器推送，适合实时场景
-- **HTTP**: 标准Web通信，适合云服务
-
-**能力层**
-
-提供工具发现、参数校验、权限控制等高级功能。
+最终选 MCP 的原因：**它是协议层的标准化，不绑定任何框架**。写一个 MCP server，Claude Desktop、Cursor、甚至自己的应用都能直接调用。
 
 ---
 
-### 03. 实战：5分钟接入文件功能
+### 03. 实战：从零搭建文件操作 Server
 
-让我们看一个实际例子。假设你想让Claude Desktop能读写本地文件。
-
-**步骤1：安装依赖**
+**环境准备**
 
 ```bash
 pip install mcp
 ```
 
-**步骤2：编写MCP Server**
+> 需要 Python 3.10+，建议用虚拟环境。
+
+**核心代码**
 
 ```python
-from mcp.server import Server
-import asyncio
+from mcp.server.fastmcp import FastMCP
 
-app = Server("file-tools")
+# 创建 MCP server 实例
+app = FastMCP("file-tools")
 
 @app.tool()
-async def read_file(path: str) -> str:
+def read_file(path: str) -> str:
     """读取文件内容"""
-    try:
-        with open(path, 'r', encoding='utf-8') as f:
-            return f.read()
-    except Exception as e:
-        return f"Error: {e}"
+    with open(path, "r", encoding="utf-8") as f:
+        return f.read()
 
 @app.tool()
-async def write_file(path: str, content: str) -> str:
+def write_file(path: str, content: str) -> str:
     """写入文件"""
-    try:
-        with open(path, 'w', encoding='utf-8') as f:
-            f.write(content)
-        return "Success"
-    except Exception as e:
-        return f"Error: {e}"
+    with open(path, "w", encoding="utf-8") as f:
+        f.write(content)
+    return f"写入成功: {path}"
 
 if __name__ == "__main__":
-    asyncio.run(app.run())
+    app.run()
 ```
 
-**步骤3：配置Claude Desktop**
+代码很简单：用 `@app.tool()` 装饰器注册工具函数，MCP SDK 自动处理协议层的事情。
 
-在配置文件中添加：
+**配置 Claude Desktop**
+
+编辑配置文件，添加：
 
 ```json
 {
   "mcpServers": {
     "file-tools": {
       "command": "python",
-      "args": ["/path/to/your/server.py"]
+      "args": ["server.py"]
     }
   }
 }
 ```
 
-重启Claude Desktop，你就能直接让AI操作文件了！
+重启 Claude Desktop，在对话中说"帮我读取 /tmp/test.txt 的内容"——AI 就会自动调用你写的 `read_file` 工具。
 
 ---
 
 ### 04. 踩坑记录
 
-在实际使用中，我遇到几个需要注意的点：
+跑通基本功能很快，但实际使用中遇到了几个问题。
 
-**坑1：编码问题**
+**坑 1：Windows 编码问题**
 
-Windows默认是GBK编码，处理中文文件时要显式指定`encoding='utf-8'`。
+默认读文件用的系统编码（Windows 是 GBK），中文文件直接报错。
 
-**坑2：路径处理**
+解决：**所有文件操作显式指定 `encoding="utf-8"`**。这个看着简单，但第一次排查花了半小时，因为报错信息完全看不出是编码问题。
 
-不同操作系统的路径格式不同，建议使用`pathlib`库：
+**坑 2：stdio 模式调试困难**
 
-```python
-from pathlib import Path
-path = Path.home() / "documents" / "file.txt"
-```
+MCP 默认用 stdio 传输（标准输入输出），意味着 print 调试法用不了——print 的内容会被当成协议消息。
 
-**坑3：权限控制**
-
-生产环境一定要限制文件访问范围，避免安全风险：
+解决：用 **loguru 写日志到文件**，别往 stdout 输出任何东西。
 
 ```python
-ALLOWED_PATHS = ["/home/user/workspace"]
+from loguru import logger
+logger.add("server.log", rotation="10 MB")
 ```
+
+**坑 3：安全问题**
+
+裸跑的文件操作 server 能访问整个磁盘，生产环境绝对不行。
+
+解决：加一个路径白名单：
+
+```python
+ALLOWED = ["/home/user/workspace"]
+
+def check_path(path: str) -> bool:
+    return any(path.startswith(p) for p in ALLOWED)
+```
+
+> 这个容易忽略，但一旦出问题就是安全事故。
 
 ---
 
-### 05. 写在最后
+### 05. 效果数据
 
-MCP协议的出现，让我看到了AI应用开发的新可能。
+用了一个月，对比一下前后差异：
 
-**它带来的不仅是技术便利，更是思维转变：**
+| 指标 | 之前（直接调 API） | 之后（MCP） |
+|------|-------------------|-------------|
+| 对接代码量 | ~2000 行（3 套） | ~600 行（1 套） |
+| 新增工具耗时 | 2-3 天 | 半天 |
+| 支持的 client | 仅自己的应用 | Claude Desktop + Cursor + 自定义 |
 
-- 从"平台绑定"到"一次开发"
-- 从"重复造轮子"到"生态共享"
-- 从"封闭集成"到"开放协作"
+**代码量减少 70%，最大的收益是不用重复劳动了。**
 
-我相信，随着MCP生态的成熟，会有越来越多优秀的工具涌现。作为开发者，我们应该拥抱这个趋势，让自己的AI应用具备更强的连接能力。
+---
 
-> **金句**：在AI时代，连接能力比单一能力更重要。
+### 06. 写在最后
+
+做完这个项目，我最大的感受是——AI 工具的价值不在于单个功能多强，而在于**连接能力**。
+
+MCP 的方向是对的：与其让每个开发者重复造轮子，不如定义一个标准，让工具可以复用。但现阶段它还有明显的短板：文档分散、调试体验差、生态还在早期。
+
+我的建议是：如果你在做需要 AI 调用本地工具的项目，现在就可以用 MCP。学习成本不高，半天能上手。但如果你对协议稳定性要求很高，可以再观望一两个版本。
+
+完整代码已开源，GitHub 搜 `mcp-content-styles` 可以找到。
+
+---
 
 **推荐阅读**
-- [MCP官方文档](https://modelcontextprotocol.io)
-- [我如何用MCP搭建自动化工作流](#)
-- [10个实用的MCP工具推荐](#)
+- [MCP 官方文档](https://modelcontextprotocol.io)
+- [FastMCP 库文档](https://github.com/jlowin/fastmcp)
 
 ---
 
-感谢阅读！如果觉得有帮助，欢迎点赞、在看、转发。有问题可以在评论区留言，我会及时回复。
-
-**关注「KevinTen的技术分享」，获取更多AI工程化实践经验。**
+如果觉得有帮助，欢迎点赞、在看。有问题评论区聊。

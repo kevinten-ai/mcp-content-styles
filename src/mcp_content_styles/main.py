@@ -29,7 +29,7 @@ def get_platform_prompt(
     Get platform-specific content creation prompt
 
     Args:
-        platform: Platform name (zhihu, wechat, xiaohongshu, weibo, douyin)
+        platform: Platform name (zhihu, wechat, xiaohongshu, weibo, douyin, x)
         content_type: Content type (article, note, post, script, image)
         mode: Processing mode - "format" (keep structure) or "rewrite" (rewrite style)
         topic: Topic for rewrite mode
@@ -104,7 +104,8 @@ def list_platforms() -> str:
             "wechat": "📰",
             "xiaohongshu": "📕",
             "weibo": "📢",
-            "douyin": "🎬"
+            "douyin": "🎬",
+            "x": "🐦"
         }
 
         result = "# 📱 Available Platforms\n\n"
@@ -143,7 +144,7 @@ def convert_content(
 
     if platform == "xiaohongshu":
         content_type = "note"
-    elif platform == "weibo":
+    elif platform in ("weibo", "x"):
         content_type = "post"
     elif platform == "douyin":
         content_type = "script"

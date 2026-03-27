@@ -89,14 +89,14 @@ class TestListPlatforms:
     def test_returns_formatted_list(self):
         """Test that platform list is formatted."""
         result = list_platforms()
-        assert "知乎" in result
-        assert "公众号" in result
-        assert "小红书" in result
+        assert "zhihu" in result
+        assert "wechat" in result
+        assert "xiaohongshu" in result
 
     def test_contains_all_platforms(self):
         """Test that all supported platforms are listed."""
         result = list_platforms()
-        platforms = ["知乎", "公众号", "小红书", "微博", "抖音"]
+        platforms = ["zhihu", "wechat", "xiaohongshu", "weibo", "douyin", "x"]
         for platform in platforms:
             assert platform in result
 

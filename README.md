@@ -39,7 +39,7 @@
 
 ### 核心特性
 
-- **5 大平台** — 知乎 / 公众号 / 小红书 / 微博 / 抖音，开箱即用
+- **6 大平台** — 知乎 / 公众号 / 小红书 / 微博 / 抖音 / X(Twitter)，开箱即用
 - **双模式输出** — `format` 保持结构调格式，`rewrite` 智能重写成爆款
 - **MCP 原生** — 标准化接口，与 Claude Desktop、Cursor 等 AI 工具即插即用
 - **模板驱动** — 基于 Markdown 模板，易于编辑、版本控制、扩展新平台
@@ -52,9 +52,10 @@
 |:----:|------|----------|----------|:------:|:-------:|
 | 📚 **知乎** | `zhihu_article` | 文章/回答 | 深度分析、逻辑严密、数据支撑 | ✅ | ✅ |
 | 📰 **公众号** | `wechat_article` | 公众号文章 | AI 工程化、实战导向、结构清晰 | ✅ | ✅ |
-| 📕 **小红书** | `xiaohongshu_note` | 图文笔记 | 种草推荐、Emoji 丰富、短段落 | ✅ | ✅ |
-| 🐦 **微博** | `weibo_post` | 短博文 | 快速分享、观点鲜明、话题标签 | ✅ | ✅ |
+| 📕 **小红书** | `xiaohongshu_note` | 图文笔记 | 真实技术分享、自然表达、去模板化 | ✅ | ✅ |
+| 📢 **微博** | `weibo_post` | 短博文 | 快速分享、观点鲜明、话题标签 | ✅ | ✅ |
 | 🎵 **抖音** | `douyin_script` | 视频脚本 | 镜头标注、节奏感强、口语化 | ✅ | ✅ |
+| 🐦 **X/Twitter** | `x_post` | 推文/Thread | 简洁有力、观点鲜明、技术社区调性 | ✅ | ✅ |
 
 > **format 模式**：保持原文核心观点，调整格式适配平台排版要求。适合已有完整内容、仅需排版调整的场景。
 >
@@ -150,6 +151,7 @@ Claude 会自动调用 MCP 工具，返回小红书风格的内容。
 │                     │ xiaohongshu.. │                       │
 │                     │ weibo_post    │                       │
 │                     │ douyin_script │                       │
+│                     │ x_post        │                       │
 │                     └───────────────┘                       │
 └─────────────────────────────────────────────────────────────┘
                       │
@@ -189,7 +191,7 @@ flowchart LR
 
 ```python
 get_platform_prompt(
-    platform="xiaohongshu",     # 平台: zhihu / wechat / xiaohongshu / weibo / douyin
+    platform="xiaohongshu",     # 平台: zhihu / wechat / xiaohongshu / weibo / douyin / x
     content_type="note",        # 类型: article / note / post / script
     mode="rewrite",             # 模式: format / rewrite
     topic="AI 工具推荐",         # 主题
@@ -230,8 +232,9 @@ get_skill_content(skill_name="zhihu_article")
 | 平台 | 模式 | 字数 | 效果概览 | 示例 |
 |------|------|------|----------|------|
 | 📚 知乎 | rewrite | ~2000 字 | 深度技术分析，引用数据，"现象-原因-对策"结构 | [查看](examples/output_samples/zhihu_article.md) |
-| 📕 小红书 | rewrite | ~300 字 | "宝子们"亲切开场，Emoji 密集，种草风格 | [查看](examples/output_samples/xiaohongshu_note.md) |
+| 📕 小红书 | rewrite | ~500 字 | 真实技术分享，自然表达，去模板化 | [查看](examples/output_samples/xiaohongshu_note.md) |
 | 🎵 抖音 | rewrite | ~45 秒 | 精确镜头标注，BGM 建议，"开头 3 秒抓眼球" | [查看](examples/output_samples/douyin_script.md) |
+| 🐦 X/Twitter | rewrite | 7 条 Thread | 简洁有力，技术社区调性，building in public | [查看](examples/output_samples/x_post.md) |
 | 📰 公众号 | format | ~1500 字 | 步骤清晰的实战教程，含代码示例 | [查看](examples/output_samples/wechat_article.md) |
 | 🐦 微博 | format | ~200 字 | 话题标签 + 观点鲜明 + 互动引导 | [查看](examples/output_samples/weibo_post.md) |
 
@@ -254,7 +257,8 @@ mcp-content-styles/
 │       ├── wechat_article.md
 │       ├── xiaohongshu_note.md
 │       ├── weibo_post.md
-│       └── douyin_script.md
+│       ├── douyin_script.md
+│       └── x_post.md
 ├── tests/                       # 测试
 ├── examples/                    # 使用示例 & 输出样例
 ├── assets/                      # 图片资源
@@ -325,7 +329,7 @@ MCP Content Styles 专注于 **Prompt 生成** 这一环节，通过与其他 MC
 
 **Roadmap：**
 
-- [ ] 更多平台（B 站、快手、Twitter、LinkedIn）
+- [ ] 更多平台（B 站、快手、LinkedIn）
 - [ ] 自定义模板上传
 - [ ] Web UI 管理界面
 - [ ] 模板效果预览
@@ -362,7 +366,7 @@ Add to Claude Desktop config:
 
 ### Features
 
-- **5 platforms**: Zhihu, WeChat Official Account, Xiaohongshu, Weibo, Douyin
+- **6 platforms**: Zhihu, WeChat Official Account, Xiaohongshu, Weibo, Douyin, X/Twitter
 - **2 modes**: `format` (preserve structure, adjust style) / `rewrite` (AI-powered rewrite)
 - **MCP native**: Standard protocol, works with Claude Desktop, Cursor, and any MCP client
 - **Template-driven**: Markdown-based templates, easy to extend
