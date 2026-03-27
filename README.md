@@ -39,7 +39,7 @@
 
 ### 核心特性
 
-- **6 大平台** — 知乎 / 公众号 / 小红书 / 微博 / 抖音 / X(Twitter)，开箱即用
+- **12 大平台** — 知乎 / 公众号 / 小红书 / 微博 / 抖音 / X / 掘金 / CSDN / Dev.to / Medium / Bluesky / Hacker News
 - **双模式输出** — `format` 保持结构调格式，`rewrite` 智能重写成爆款
 - **MCP 原生** — 标准化接口，与 Claude Desktop、Cursor 等 AI 工具即插即用
 - **模板驱动** — 基于 Markdown 模板，易于编辑、版本控制、扩展新平台
@@ -56,6 +56,12 @@
 | 📢 **微博** | `weibo_post` | 短博文 | 快速分享、观点鲜明、话题标签 | ✅ | ✅ |
 | 🎵 **抖音** | `douyin_script` | 视频脚本 | 镜头标注、节奏感强、口语化 | ✅ | ✅ |
 | 🐦 **X/Twitter** | `x_post` | 推文/Thread | 简洁有力、观点鲜明、技术社区调性 | ✅ | ✅ |
+| 💎 **掘金** | `juejin_article` | 技术文章 | 代码驱动、实战干货、Markdown 原生 | ✅ | ✅ |
+| 📘 **CSDN** | `csdn_article` | 技术博客 | 教程导向、步骤详尽、SEO 友好 | ✅ | ✅ |
+| 👩‍💻 **Dev.to** | `devto_article` | 英文技术文章 | Developer-first、实战分享、社区互动 | ✅ | ✅ |
+| 📓 **Medium** | `medium_article` | 英文技术长文 | 叙事驱动、深度思考、精美排版 | ✅ | ✅ |
+| 🦋 **Bluesky** | `bluesky_post` | 推文/Thread | 真诚分享、开发者友好、反算法优化 | ✅ | ✅ |
+| 🟠 **Hacker News** | `hackernews_post` | 提交/评论 | 极简高密度、技术深度、反营销 | ✅ | ✅ |
 
 > **format 模式**：保持原文核心观点，调整格式适配平台排版要求。适合已有完整内容、仅需排版调整的场景。
 >
@@ -152,6 +158,12 @@ Claude 会自动调用 MCP 工具，返回小红书风格的内容。
 │                     │ weibo_post    │                       │
 │                     │ douyin_script │                       │
 │                     │ x_post        │                       │
+│                     │ juejin_article│                       │
+│                     │ csdn_article  │                       │
+│                     │ devto_article │                       │
+│                     │ medium_article│                       │
+│                     │ bluesky_post  │                       │
+│                     │ hackernews_.. │                       │
 │                     └───────────────┘                       │
 └─────────────────────────────────────────────────────────────┘
                       │
@@ -191,7 +203,7 @@ flowchart LR
 
 ```python
 get_platform_prompt(
-    platform="xiaohongshu",     # 平台: zhihu / wechat / xiaohongshu / weibo / douyin / x
+    platform="xiaohongshu",     # 平台: zhihu / wechat / xiaohongshu / weibo / douyin / x / juejin / csdn / devto / medium / bluesky / hackernews
     content_type="note",        # 类型: article / note / post / script
     mode="rewrite",             # 模式: format / rewrite
     topic="AI 工具推荐",         # 主题
@@ -258,7 +270,13 @@ mcp-content-styles/
 │       ├── xiaohongshu_note.md
 │       ├── weibo_post.md
 │       ├── douyin_script.md
-│       └── x_post.md
+│       ├── x_post.md
+│       ├── juejin_article.md
+│       ├── csdn_article.md
+│       ├── devto_article.md
+│       ├── medium_article.md
+│       ├── bluesky_post.md
+│       └── hackernews_post.md
 ├── tests/                       # 测试
 ├── examples/                    # 使用示例 & 输出样例
 ├── assets/                      # 图片资源
@@ -329,7 +347,7 @@ MCP Content Styles 专注于 **Prompt 生成** 这一环节，通过与其他 MC
 
 **Roadmap：**
 
-- [ ] 更多平台（B 站、快手、LinkedIn）
+- [ ] 更多平台（B 站、快手、LinkedIn、Reddit）
 - [ ] 自定义模板上传
 - [ ] Web UI 管理界面
 - [ ] 模板效果预览
@@ -366,7 +384,7 @@ Add to Claude Desktop config:
 
 ### Features
 
-- **6 platforms**: Zhihu, WeChat Official Account, Xiaohongshu, Weibo, Douyin, X/Twitter
+- **12 platforms**: Zhihu, WeChat, Xiaohongshu, Weibo, Douyin, X/Twitter, Juejin, CSDN, Dev.to, Medium, Bluesky, Hacker News
 - **2 modes**: `format` (preserve structure, adjust style) / `rewrite` (AI-powered rewrite)
 - **MCP native**: Standard protocol, works with Claude Desktop, Cursor, and any MCP client
 - **Template-driven**: Markdown-based templates, easy to extend

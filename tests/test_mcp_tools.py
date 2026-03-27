@@ -96,7 +96,10 @@ class TestListPlatforms:
     def test_contains_all_platforms(self):
         """Test that all supported platforms are listed."""
         result = list_platforms()
-        platforms = ["zhihu", "wechat", "xiaohongshu", "weibo", "douyin", "x"]
+        platforms = [
+            "zhihu", "wechat", "xiaohongshu", "weibo", "douyin", "x",
+            "juejin", "csdn", "devto", "medium", "bluesky", "hackernews"
+        ]
         for platform in platforms:
             assert platform in result
 
